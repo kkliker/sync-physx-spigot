@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
+    id "fr.il_totore.manadrop" version "0.4.3"
+}
+
+group = 'ru.sheep'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        // As of Gradle 5.1, you can limit this to only those
+        // dependencies you expect from it
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+    /*
+     As Spigot-API depends on the BungeeCord ChatComponent-API,
+    we need to add the Sonatype OSS repository, as Gradle,
+    in comparison to maven, doesn't want to understand the ~/.m2
+    directory unless added using mavenLocal(). Maven usually just gets
+    it from there, as most people have run the BuildTools at least once.
+    This is therefore not needed if you're using the full Spigot/CraftBukkit,
+    or if you're using the Bukkit API.
+    */
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
+}
+
+
+
+dependencies {
+
+    // Spigot
+    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
+
+    // Commands (aikar)
+    implementation "co.aikar:acf-bukkit:0.5.1-SNAPSHOT" // Replace PLATFORM with bukkit, paper, sponge, etc
+
+    // os
+    var os = org.gradle.internal.os.OperatingSystem.current()
+    var natives;
+    if (os.isLinux()) natives = "natives-linux"
+    else if (os.isMacOsX()) natives = "natives-macos"
+    else natives = "natives-windows"
+
+    // lwjgl
+    implementation "org.lwjgl:lwjgl:3.3.1"
+    implementation "org.lwjgl:lwjgl:3.3.1:$natives"
+
+    // PhysX
+    implementation("de.fabmax:physx-jni:2.3.2")
+    runtimeOnly("de.fabmax:physx-jni:2.3.2:$natives")
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.32'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    implementation 'org.jetbrains:annotations:24.0.0'
+}
+
+spigot {
+
+    desc {
+        named 'sync-physx-spigot' //Default: the project name
+        version project.version //Default: the project version
+        authors 'sheep'
+        main 'ru.sheep.Main'
+        apiVersion("1.19")
+
+    }
+}
+processResources.finalizedBy(spigotPlugin)
+
+shadowJar {
+    relocate 'co.aikar.commands', 'ru.sheep.acf'
+    relocate 'co.aikar.locales', 'ru.sheep.locales'
+}
+
