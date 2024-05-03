@@ -13,4 +13,4 @@
  - Симуляция тела игрока
  - Ломание/Вставка блоков
 
-Демонстрация: https://youtu.be/Bv14fF_akkY
+Демонстрация: [https://www.youtube.com/watch?v=Bv14fF_akkY]
