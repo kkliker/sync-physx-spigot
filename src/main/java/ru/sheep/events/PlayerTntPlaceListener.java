@@ -18,7 +18,6 @@ public class PlayerTntPlaceListener  implements Listener {
 
         var block = event.getBlock();
         if (block.getType() == Material.TNT) {
-            System.out.println("BOOOM");
             PhysXUtils.boom(Main.getSimulation(), event.getBlock().getLocation());
         }
         }
