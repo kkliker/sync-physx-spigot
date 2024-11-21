@@ -32,7 +32,6 @@ public class Main extends JavaPlugin {
         var bodyhandler = new PlayerBodyHandler();
 
         // simulation scheduler
-        // Я не знаю как использовать баккит асинхронно, поэтому много блоков эта фигня не вывезет.
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(this,() -> {
             simulation.update(1f / (float) 20);
             bodyhandler.update_player_bodies(simulation);
